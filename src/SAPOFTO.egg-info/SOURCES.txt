@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+src/SAPOFTO/SAPOFTO.py
+src/SAPOFTO/__init__.py
+src/SAPOFTO.egg-info/PKG-INFO
+src/SAPOFTO.egg-info/SOURCES.txt
+src/SAPOFTO.egg-info/dependency_links.txt
+src/SAPOFTO.egg-info/top_level.txt
