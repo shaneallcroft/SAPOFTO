@@ -466,6 +466,23 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
         exec(self.getAST())
 
 
+    #SURVEY
+    #
+    def applySurvey(self):
+        for question_key in self.keys():
+            if not self[question_key].hasTag('survey'):
+                continue
+            question_prompt = self[question_key].getValue()
+            self[question_key].setValue(input(question_prompt))
+            self[question_key].addTag('answered')
+            self[question_key].removeTag('survey')
+        
+
+        
+
+
+
+
     # -------------------------------------------------------
     #  TRANSLATION STUFF (PROBS NOT RELEVANT TIL LATER)
     # -------------------------------------------------------

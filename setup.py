@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="SAPOFTO",
-    version="0.0.1",
+    version="0.0.3",
     author="Shane Allcroft",
     author_email="shaneallcroft@fedoraproject.org",
     description="Parse, compose, evaluate and execute org files and data in org-down notation.",
