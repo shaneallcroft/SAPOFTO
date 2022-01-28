@@ -89,7 +89,8 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
                     begin_tag = tag
                     tags_cpy.remove(tag)
                     continue
-            ret_str += '#+' + '\n#+'.join(tags_cpy) + '\n'
+            if len(tags_cpy) > 0:                
+                ret_str += '#+' + '\n#+'.join(tags_cpy) + '\n'
             if ret_str.endswith('\n\n'):
                 ret_str = ret_str[:-1]
             if begin_tag != '':
@@ -425,9 +426,11 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
         for i in range(0,len(value_list)):
             if  bool(i % 2):
                 parameter_key = value_list[i]
+                
                 if parameter_key in prototype_parameters.keys():
                     vacancies_filled_count += 1
                     new_val += str(prototype_parameters[parameter_key].getValue())
+                #elif parameter_key.startswith()
                 else:
                     new_val += prototype_partition
                     new_val += parameter_key
