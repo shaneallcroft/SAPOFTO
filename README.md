@@ -6,5 +6,5 @@ This project is an evolution on the OrgNode object from (https://github.com/shan
 
 Install it with
 ```
-python -m install SAPOFTO
+python -m pip install SAPOFTO
 ```
