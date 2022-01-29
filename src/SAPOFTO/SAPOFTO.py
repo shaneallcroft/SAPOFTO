@@ -276,8 +276,9 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
 
         
     def removeAllChildren(self):
-        value = self.getValue()
+        value = self.getValue() # This probably should just be a direct self.content access using '\n*'.
         self.content = {}
+        self.contentOrdered = []
         self.content['\n* '] = value
         
     def getValue(self):
