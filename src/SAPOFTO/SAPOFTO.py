@@ -3,9 +3,12 @@ import os
 
 class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
     counter = 0
-    def __init__(self, key, content='', filename='', level=1):  # TODO maybe make defaults, especially a universal spear
-        self.level = level            
-        self.key = key.upper()
+    def __init__(self, key, content='', filename='', level=1, case_sensitive=False):  # TODO maybe make defaults, especially a universal spear
+        self.level = level
+        if case_sensitive:
+            self.key = key
+        else:
+            self.key = key.upper()
         self.tags = set()
         self.isLeaf = False
         self.content = dict()
@@ -232,7 +235,13 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
             mamtching_nodes.extend(child_node.treeSearchByKey(search_tag))
         return matching_nodes
 
-
+    def treeSearchLambda(self, lamb):
+        matching_nodes = []
+        for child_node in self.contentOrdered:
+            if lamb(child_node):
+                matching_nodes.append(child_node)
+            mamtching_nodes.extend(child_node.treeSearchByKey(search_tag))
+        return matching_nodes
         
     def addChild(self, child, index=-1):
         self.content[child.key] = child
@@ -348,7 +357,7 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
     def setHeadKey(self, new_key):
         self.key = new_key
 
-    def getHeadKey(self):
+    def getHeadKey(self): # Yes you COULD just do .key, this more clearly distinguishes from .keys() though.
         return self.key
 
     def flatten(self):
@@ -480,10 +489,6 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
             self[question_key].setValue(input(question_prompt))
             self[question_key].addTag('answered')
             self[question_key].removeTag('survey')
-        
-
-        
-
 
 
 
@@ -567,3 +572,50 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
             self.translationCode += current_function_string
             
         return self.translationCode
+
+
+
+def recursiveFolderRead(folder_path, absolute_keys=False):
+    if absolute_keys:
+        head_key = folder_path
+    else:
+        head_key = os.path.basename(os.path.normpath(folder_path))
+    head = SAPOFTO(key=head_key)
+    for item_name in os.listdir(folder_path):
+        if not absolute_keys:
+            item_key = item_name
+        else:
+            item_key = os.path.join(folder_path, item_name)
+        
+        if os.isdir(os.path.join(folder_path, item_name)):
+            head.addChild(recursiveFolderRead(os.path.join(folder_path, item_name, absolute_keys)))
+        else:            
+            if item_name.endswith('.org'):
+                head.addChild(SAPOFTO(key=item_key, filename=os.path.join(folder_path, item_name)))
+            else:
+                head.constructAndAddChild(key=item_key, filename=os.path.join(folder_path, item_name))
+    print('TODO recursiveFolderRead')
+    return head 
+
+
+
+def recursiveFolderWrite(head, folder_path=None, absolute_keys=False):
+    if folder_path is None and not absolute_keys:
+        print('(folder_path is None and not absolute_keys returned true) in function recursiveFolderWrite')
+        return
+    if absolute_keys:
+        full_head_path = head.getHeadKey()
+    else:
+        full_head_path = os.path.join(folder, head.getHeadKey())
+        
+    if not os.path.isdir(full_head_path):
+        os.path.basename(os.path.normpath(folder_path))u
+        os.path.mkdirs(full_head_path)
+
+    for child in head.getContentOrdered():        
+        if child.getHeadKey().endswith('.org'):
+            child.writeToFile(full_head_path, child.getHeadKey())
+        elif os.path.isfile(os.path.join(full_head_path, child.getHeadKey())):
+            continue
+        else:
+            recursiveFolderWrite(child, full_head_path, absolute_keys)
