@@ -599,7 +599,7 @@ def recursiveFolderRead(folder_path, absolute_keys=False):
 
 
 
-def recursiveFolderWrite(head, folder_path=None, absolute_keys=False):
+def recursiveFolderWrite(head, folder_path=None, absolute_keys=False, safe_mode=False):
     if folder_path is None and not absolute_keys:
         print('(folder_path is None and not absolute_keys returned true) in function recursiveFolderWrite')
         return
@@ -609,7 +609,9 @@ def recursiveFolderWrite(head, folder_path=None, absolute_keys=False):
         full_head_path = os.path.join(folder, head.getHeadKey())
         
     if not os.path.isdir(full_head_path):
-        os.path.basename(os.path.normpath(folder_path))u
+        os.path.basename(os.path.normpath(folder_path))
+        if safe_mode:
+            input('about to run os.mkdirs("' + full_head_path + '"')
         os.path.mkdirs(full_head_path)
 
     for child in head.getContentOrdered():        
