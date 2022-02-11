@@ -19,8 +19,8 @@ def recursiveFolderRead(folder_path, absolute_keys=False):
         if os.path.isdir(os.path.join(folder_path, item_name)):
             head.addChild(recursiveFolderRead(os.path.join(folder_path, item_name, absolute_keys)))
         else:            
-            if item_name.endswith('.org'):
-                head.addChild(SAPOFTO(key=item_key, filename=os.path.join(folder_path, item_name)))
+            if item_name.endswith('.org') or item_name.endswith('.ORG'):
+                head.addChild(SAPOFTO(key=item_key, filename=os.path.join(folder_path, item_name.lower())))
             else:
                 head.constructAndAddChild(key=item_key, filename=os.path.join(folder_path, item_name))
     print('TODO recursiveFolderRead')
@@ -35,21 +35,21 @@ def recursiveFolderWrite(head, folder_path=None, absolute_keys=False, safe_mode=
     if absolute_keys:
         full_head_path = head.getHeadKey()
     else:
-        full_head_path = os.path.join(folder, head.getHeadKey())
+        full_head_path = os.path.join(folder_path, head.getHeadKey())
         
     if not os.path.isdir(full_head_path):
         os.path.basename(os.path.normpath(folder_path))
         if safe_mode:
             input('about to run os.mkdirs("' + full_head_path + '"')
-        os.path.mkdirs(full_head_path)
+        os.makedirs(full_head_path)
 
     for child in head.getContentOrdered():        
-        if child.getHeadKey().endswith('.org'):
-            child.writeToFile(full_head_path, child.getHeadKey())
+        if child.getHeadKey().endswith('.org') or child.getHeadKey().endswith('.ORG'):
+            child.writeToFile(full_head_path)
         elif os.path.isfile(os.path.join(full_head_path, child.getHeadKey())):
             continue
         else:
-            recursiveFolderWrite(child, full_head_path, absolute_keys)
+            recursiveFolderWrite(child, full_head_path, absolute_keys, safe_mode)
 
 
 
@@ -210,8 +210,10 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
 
     def writeToFile(self,folder_path='./',filename=''):
         if filename=='':
-            filename = self.key.lower() + '.org'
-        with open(folder_path + filename, 'w') as f:
+            filename = self.key.lower()
+            if not filename.lower().endswith('.org'):
+                filename += '.org'
+        with open(os.path.join(folder_path, filename), 'w') as f:
             f.write(self.castOrgLiteral())
             
     
@@ -288,14 +290,16 @@ class SAPOFTO: # SHANE's ALL PUPOSE ORG FILE TREE OBJECT (org is at the center)
             mamtching_nodes.extend(child_node.treeSearchByKey(search_tag))
         return matching_nodes
 
+
     def treeSearchLambda(self, lamb):
         matching_nodes = []
         for child_node in self.contentOrdered:
             if lamb(child_node):
                 matching_nodes.append(child_node)
-            mamtching_nodes.extend(child_node.treeSearchByKey(search_tag))
+            matching_nodes.extend(child_node.treeSearchLambda(lamb))
         return matching_nodes
-        
+
+    
     def addChild(self, child, index=-1):
         self.content[child.key] = child
         child.promote(self.level + 1)
