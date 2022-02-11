@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: SAPOFTO
-Version: 0.0.7
+Version: 0.0.8
 Summary: Parse, compose, evaluate and execute org files and data in org-down notation.
 Home-page: https://github.com/shaneallcroft/SAPOFTO
 Author: Shane Allcroft
